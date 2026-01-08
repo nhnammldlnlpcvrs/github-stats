@@ -1,0 +1,42 @@
+name: Generate Stats Images
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Generate images
+      run: python generate_images.py
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        GITHUB_ACTOR: nhnammldlnlpcvrs
+        EXCLUDE_FORKED_REPOS: true
+
+    - name: Commit files
+      run: |
+        git config --global user.name "github-stats-bot"
+        git config --global user.email "bot@github.com"
+        git add .
+        git commit -m "Update stats" || true
+        git push
