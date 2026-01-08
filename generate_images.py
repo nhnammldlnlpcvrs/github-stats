@@ -7,31 +7,11 @@ import re
 import aiohttp
 
 from github_stats import Stats
-
-
-################################################################################
-# Helper Functions
-################################################################################
-
-
 def generate_output_folder() -> None:
-    """
-    Create the output folder if it does not already exist
-    """
     if not os.path.isdir("generated"):
         os.mkdir("generated")
 
-
-################################################################################
-# Individual Image Generation Functions
-################################################################################
-
-
 async def generate_overview(s: Stats) -> None:
-    """
-    Generate an SVG badge with summary statistics
-    :param s: Represents user's GitHub statistics
-    """
     with open("templates/overview.svg", "r") as f:
         output = f.read()
 
@@ -50,10 +30,6 @@ async def generate_overview(s: Stats) -> None:
 
 
 async def generate_languages(s: Stats) -> None:
-    """
-    Generate an SVG badge with summary languages used
-    :param s: Represents user's GitHub statistics
-    """
     with open("templates/languages.svg", "r") as f:
         output = f.read()
 
@@ -89,19 +65,9 @@ fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path></svg>
     with open("generated/languages.svg", "w") as f:
         f.write(output)
 
-
-################################################################################
-# Main Function
-################################################################################
-
-
 async def main() -> None:
-    """
-    Generate all badges
-    """
     access_token = os.getenv("ACCESS_TOKEN")
     if not access_token:
-        # access_token = os.getenv("GITHUB_TOKEN")
         raise Exception("A personal access token is required to proceed!")
     user = os.getenv("GITHUB_ACTOR")
     if user is None:
@@ -114,7 +80,6 @@ async def main() -> None:
     excluded_langs = (
         {x.strip() for x in exclude_langs.split(",")} if exclude_langs else None
     )
-    # Convert a truthy value to a Boolean
     raw_ignore_forked_repos = os.getenv("EXCLUDE_FORKED_REPOS")
     ignore_forked_repos = (
         not not raw_ignore_forked_repos
