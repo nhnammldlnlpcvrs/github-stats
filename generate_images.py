@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import asyncio
 import os
 import re
@@ -5,7 +6,6 @@ import re
 import aiohttp
 
 from github_stats import Stats
-
 
 def generate_output_folder() -> None:
     if not os.path.isdir("generated"):
@@ -67,8 +67,12 @@ fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path></svg>
 
 
 async def main() -> None:
+    """
+    Generate all badges
+    """
     access_token = os.getenv("ACCESS_TOKEN")
     if not access_token:
+        # access_token = os.getenv("GITHUB_TOKEN")
         raise Exception("A personal access token is required to proceed!")
     user = os.getenv("GITHUB_ACTOR")
     if user is None:
@@ -81,6 +85,7 @@ async def main() -> None:
     excluded_langs = (
         {x.strip() for x in exclude_langs.split(",")} if exclude_langs else None
     )
+    # Convert a truthy value to a Boolean
     raw_ignore_forked_repos = os.getenv("EXCLUDE_FORKED_REPOS")
     ignore_forked_repos = (
         not not raw_ignore_forked_repos
